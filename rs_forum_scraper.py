@@ -5,6 +5,7 @@ from datetime import date
 from datetime import datetime
 import pymongo
 
+# Tag: 5:07pm 4/28/2020
 
 def main():
     old_forum_data = get_current_forum_data()
