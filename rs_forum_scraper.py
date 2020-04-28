@@ -1,13 +1,16 @@
+import json
 import requests
 from bs4 import BeautifulSoup
-from datetime import datetime
 from datetime import date
-import json
-# A change another change
+from datetime import datetime
+import pymongo
+
+
 def main():
     old_forum_data = get_current_forum_data()
     new_forum_data = get_new_forum_data()
     update_forum_data(old_forum_data, new_forum_data)
+
 
 def get_current_forum_data():
     try:
@@ -15,6 +18,7 @@ def get_current_forum_data():
             return json.load(f)
     except FileNotFoundError:
         return []
+
 
 def get_new_forum_data():
     # Making html soup, yum
@@ -35,13 +39,21 @@ def get_new_forum_data():
         })
     return forum_data_new
 
-def update_forum_data(forum_data_old, forum_data_new):
-    master_forum_data = forum_data_old + [forum_data_new]
 
-    # Write New and Old Community Lounge data to JSON file
-    with open("runescape_stats.json", "w") as towrite:
-        towrite.write(json.dumps(master_forum_data, indent=2))
-    # All done!
+def update_forum_data(forum_data_old, forum_data_new):
+    master_forum_data = forum_data_old + forum_data_new
+
+    # Write JSON remotely to mongo
+    uri = "mongodb+srv://fef:dbtest@cluster0-9cldq.mongodb.net/test?retryWrites=true&w=majority"
+    client = pymongo.MongoClient(uri)
+    database = client['forum_data']
+    collection = database['rs_forum_data']
+    collection.insert_many(master_forum_data)
+
+    # Write JSON locally
+    # with open("runescape_stats.json", "w") as towrite:
+    #     towrite.write(json.dumps(master_forum_data, indent=2))
+
 
 if __name__ == "__main__":
     main()
