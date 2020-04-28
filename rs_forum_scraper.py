@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 from datetime import date
 import json
-# A change
+# A change another change
 def main():
     old_forum_data = get_current_forum_data()
     new_forum_data = get_new_forum_data()
