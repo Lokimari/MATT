@@ -45,7 +45,7 @@ def get_new_forum_data():
 
 
 def update_forum_data(forum_data_old, forum_data_new):
-    master_forum_data = forum_data_old + forum_data_new
+    # master_forum_data = forum_data_old + forum_data_new
 
     # Write JSON remotely to mongo
     # mongo_rs_forum_data().insert_many(master_forum_data)
