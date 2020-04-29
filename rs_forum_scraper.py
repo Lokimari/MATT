@@ -6,10 +6,8 @@ import pymongo
 
 
 def main():
-    old_forum_data = get_current_forum_data()
-    print(old_forum_data)
     new_forum_data = get_new_forum_data()
-    update_forum_data(old_forum_data, new_forum_data)
+    update_forum_data(new_forum_data)
 
 
 def mongo_rs_forum_data():
@@ -44,9 +42,7 @@ def get_new_forum_data():
     return forum_data_new
 
 
-def update_forum_data(forum_data_old, forum_data_new):
-    master_forum_data = forum_data_old + forum_data_new
-
+def update_forum_data(new_forum_data):
     # Write JSON remotely to mongo
     # mongo_rs_forum_data().insert_many(master_forum_data)
 
