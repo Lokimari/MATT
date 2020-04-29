@@ -1,24 +1,27 @@
-import json
 import requests
 from bs4 import BeautifulSoup
 from datetime import date
 from datetime import datetime
 import pymongo
 
-# Tag: 5:07pm 4/28/2020
 
 def main():
     old_forum_data = get_current_forum_data()
+    print(old_forum_data)
     new_forum_data = get_new_forum_data()
     update_forum_data(old_forum_data, new_forum_data)
 
 
+def mongo_rs_forum_data():
+    uri = "mongodb+srv://fef:dbtest@cluster0-9cldq.mongodb.net/test?retryWrites=true&w=majority"
+    client = pymongo.MongoClient(uri)
+    database = client['forum_data']
+    collection = database['rs_forum_data']
+    return collection
+
+
 def get_current_forum_data():
-    try:
-        with open("runescape_stats.json", "r") as f:
-            return json.load(f)
-    except FileNotFoundError:
-        return []
+    return list(mongo_rs_forum_data().find())
 
 
 def get_new_forum_data():
@@ -45,15 +48,7 @@ def update_forum_data(forum_data_old, forum_data_new):
     master_forum_data = forum_data_old + forum_data_new
 
     # Write JSON remotely to mongo
-    uri = "mongodb+srv://fef:dbtest@cluster0-9cldq.mongodb.net/test?retryWrites=true&w=majority"
-    client = pymongo.MongoClient(uri)
-    database = client['forum_data']
-    collection = database['rs_forum_data']
-    collection.insert_many(master_forum_data)
-
-    # Write JSON locally
-    # with open("runescape_stats.json", "w") as towrite:
-    #     towrite.write(json.dumps(master_forum_data, indent=2))
+    # mongo_rs_forum_data().insert_many(master_forum_data)
 
 
 if __name__ == "__main__":
